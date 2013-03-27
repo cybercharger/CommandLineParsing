@@ -9,9 +9,10 @@ public class ParsingException extends Exception {
     public enum Error {
         DuplicateSwitches,
         InvalidSwitchName,
+        InvalidSwitchType,
         DuplicateOperations,
         InvalidOptionName,
-        OperationNameNotSepcified,
+        OperationNameNotSpecified,
         NoDescription,
         ParsingError,
         Unspecified,

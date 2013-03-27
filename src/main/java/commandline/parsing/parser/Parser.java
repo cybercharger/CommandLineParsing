@@ -48,7 +48,7 @@ public class Parser {
         if (set == null) throw new IllegalArgumentException("null switch set found");
         HashMap<String, SwitchInfo> target = null;
         SwitchOperation annOpt = getAnnotation(SwitchOperation.class, set.getClass().getDeclaredAnnotations());
-        if (annOpt == null) throw new ParsingException(ParsingException.Error.OperationNameNotSepcified);
+        if (annOpt == null) throw new ParsingException(ParsingException.Error.OperationNameNotSpecified);
     }
 
 

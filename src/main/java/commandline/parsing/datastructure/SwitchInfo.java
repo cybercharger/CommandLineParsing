@@ -1,6 +1,7 @@
 package commandline.parsing.datastructure;
 
 import commandline.parsing.Exceptions.ParsingException;
+import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -8,7 +9,10 @@ import org.apache.commons.lang3.StringUtils;
  * Date: 3/26/13
  * Time: 11:54 AM
  */
-public abstract class SwitchInfo<T> {
+public abstract class SwitchInfo {
+
+    static public final String nullDefault = "";
+
     public String getShortName() {
         return shortName;
     }
@@ -29,12 +33,18 @@ public abstract class SwitchInfo<T> {
         return flag;
     }
 
-    public T getDefaultValue() {
+    public String getDefaultValue() {
+        if (nullDefault.equals(defaultValue)) return null;
         return defaultValue;
     }
 
-    public Class<T> getType() {
+    public Class<?> getType() {
         return type;
+    }
+
+    public String getKey() {
+        if (StringUtils.isNotBlank(longName)) return longName;
+        return shortName;
     }
 
     private String shortName;
@@ -42,10 +52,10 @@ public abstract class SwitchInfo<T> {
     private String description;
     private boolean required;
     private boolean flag;
-    private T defaultValue;
-    private Class<T> type;
+    private String defaultValue;
+    private Class<?> type;
 
-    public SwitchInfo(String shortName, String longName, String description, boolean required, boolean flag, T defaultValue, Class<T> type)
+    public SwitchInfo(String shortName, String longName, String description, boolean required, boolean flag, String defaultValue, Class<?> type)
             throws ParsingException {
         if (StringUtils.isBlank(shortName) && StringUtils.isBlank(longName)) {
             throw new ParsingException("both short name and long name are null or empty", ParsingException.Error.InvalidSwitchName);
@@ -58,5 +68,11 @@ public abstract class SwitchInfo<T> {
         this.flag = flag;
         this.defaultValue = defaultValue;
         this.type = type;
+    }
+
+    public Option createOption() {
+        Option opt = new Option(shortName, longName, !flag, description);
+        opt.setRequired(required);
+        return opt;
     }
 }

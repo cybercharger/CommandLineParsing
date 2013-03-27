@@ -8,8 +8,8 @@ import commandline.parsing.Exceptions.ParsingException;
  * Time: 11:54 PM
  */
 
-public class FlagSwitchInfo extends SwitchInfo<Boolean> {
+public class FlagSwitchInfo extends SwitchInfo {
     public FlagSwitchInfo(String shortName, String longName, String description) throws ParsingException {
-        super(shortName, longName, description, false, true, false, Boolean.class);
+        super(shortName, longName, description, false, true, "false", Boolean.class);
     }
 }
