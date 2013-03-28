@@ -3,10 +3,7 @@ package commandline.parsing.parser;
 import commandline.parsing.Exceptions.ParsingException;
 import commandline.parsing.annotations.FlagSwitch;
 import commandline.parsing.annotations.ParamSwitch;
-import commandline.parsing.datastructure.FlagSwitchInfo;
-import commandline.parsing.datastructure.ParameterSwitchInfo;
-import commandline.parsing.datastructure.SwitchInfo;
-import commandline.parsing.datastructure.SwitchSet;
+import commandline.parsing.datastructure.*;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,7 +20,7 @@ import java.util.HashMap;
  */
 
 //TODO: Add support for org.apache.com.cli.OptionGroup
-public class SwitchSetParser<T extends SwitchSet> {
+public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
     public class ResultProxy implements InvocationHandler {
         private CommandLine cl;
         private SwitchSetParser parser;
@@ -41,7 +38,7 @@ public class SwitchSetParser<T extends SwitchSet> {
 
             } else {
                 String defaultValue =info.getDefaultValue();
-                return SwitchSetParser.parseValue(cl.getOptionValue(info.getKey(), defaultValue), info.getType());
+                return getConverter().convert(cl.getOptionValue(info.getKey(), defaultValue), info.getType());
             }
         }
     }
@@ -53,6 +50,12 @@ public class SwitchSetParser<T extends SwitchSet> {
     private HelpFormatter helpFormatter = null;
 
     public SwitchSetParser(Class<T> setClass) throws ParsingException {
+        this(setClass, null);
+    }
+
+    public SwitchSetParser(Class<T> setClass, Converter convert) throws ParsingException {
+        super(convert);
+
         if (setClass == null) throw new IllegalArgumentException("setClass is null");
         this.setClass = setClass;
         for (Method method : setClass.getMethods()) {
@@ -125,23 +128,5 @@ public class SwitchSetParser<T extends SwitchSet> {
     static String getKey(FlagSwitch f) {
         if (StringUtils.isNotBlank(f.longName())) return f.longName();
         return f.shortName();
-    }
-
-    static <T> T parseValue(String value, Class<T> clazz) {
-        if (clazz.isAssignableFrom(String.class)) return clazz.cast(value);
-
-        if (clazz.isAssignableFrom(Short.class) || clazz.isAssignableFrom(short.class))
-            return clazz.cast(Short.parseShort(value));
-
-        if (clazz.isAssignableFrom(Integer.class) || clazz.isAssignableFrom(int.class))
-            return clazz.cast(Integer.parseInt(value));
-
-        if (clazz.isAssignableFrom(Long.class) || clazz.isAssignableFrom(long.class))
-            return clazz.cast(Long.parseLong(value));
-
-        if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class))
-            return clazz.cast(Boolean.parseBoolean(value));
-
-        throw new RuntimeException("Unsupported type " + clazz.getCanonicalName());
     }
 }
