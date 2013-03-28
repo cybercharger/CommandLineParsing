@@ -34,7 +34,9 @@ public class TestSwitchParser {
     public void testPrimitive() {
         try {
             SwitchSetParser<Primitives> ssp = new SwitchSetParser<Primitives>(Primitives.class);
+            ssp.printHelpInfo("primitive");
             String cmd = "-bfalse -i 100 -l -200 -s3 -d2.2";
+            System.out.println("Result of parsing: " + cmd);
             Primitives res = ssp.parse(StringUtils.split(cmd));
             printPrimitives(res);
         } catch (ParsingException e) {

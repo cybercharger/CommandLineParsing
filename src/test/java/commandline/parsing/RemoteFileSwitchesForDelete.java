@@ -9,7 +9,7 @@ import commandline.parsing.annotations.ParamSwitch;
  * Time: 12:22 AM
  */
 @SwitchOperation(name = RemoteFileOperationNames.delete)
-public interface RemoteFileSwitchesForDelete {
+public interface RemoteFileSwitchesForDelete extends RemoteFileSwitchesShared {
     @ParamSwitch(shortName = "s", longName = "source", description = "full path of the file to delete", required = true)
     String getFileToDelete();
 }
