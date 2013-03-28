@@ -12,7 +12,7 @@ import org.junit.Test;
  * Date: 3/28/13
  * Time: 2:18 PM
  */
-public class SwitchParserTest {
+public class TestSwitchParser {
     public interface Primitives extends SwitchSet {
         @ParamSwitch(shortName = "b", longName = "bool", required = true, description = "boolean")
         boolean getBoolean();
