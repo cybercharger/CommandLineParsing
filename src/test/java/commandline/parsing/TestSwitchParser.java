@@ -4,6 +4,7 @@ import commandline.parsing.Exceptions.ParsingException;
 import commandline.parsing.annotations.ParamSwitch;
 import commandline.parsing.datastructure.SwitchSet;
 import commandline.parsing.parser.SwitchSetParser;
+import junit.framework.Assert;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
@@ -30,25 +31,64 @@ public class TestSwitchParser {
         double getDouble();
     }
 
+    public class PrimitivesImpl implements Primitives {
+        private boolean aBoolean;
+        private short aShort;
+        private int anInt;
+        private long aLong;
+        private double aDouble;
+
+        public PrimitivesImpl(boolean aBoolean, short aShort, int anInt, long aLong, double aDouble) {
+            this.aBoolean = aBoolean;
+            this.aShort = aShort;
+            this.anInt = anInt;
+            this.aLong = aLong;
+            this.aDouble = aDouble;
+        }
+
+        @Override
+        public boolean getBoolean() {
+            return aBoolean;
+        }
+
+        @Override
+        public short getShort() {
+            return aShort;
+        }
+
+        @Override
+        public int getInt() {
+            return anInt;
+        }
+
+        @Override
+        public long getLong() {
+            return aLong;
+        }
+
+        @Override
+        public double getDouble() {
+            return aDouble;
+        }
+    }
+
     @Test
     public void testPrimitive() {
         try {
             SwitchSetParser<Primitives> ssp = new SwitchSetParser<Primitives>(Primitives.class);
-            ssp.printHelpInfo("primitive");
             String cmd = "-bfalse -i 100 -l -200 -s3 -d2.2";
-            System.out.println("Result of parsing: " + cmd);
             Primitives res = ssp.parse(StringUtils.split(cmd));
-            printPrimitives(res);
+            verify(res, new PrimitivesImpl(false, (short)3, 100, -200L, 2.2));
         } catch (ParsingException e) {
             e.printStackTrace();
         }
     }
 
-    private void printPrimitives(Primitives p) {
-        System.out.println(String.format("b: %s", p.getBoolean()));
-        System.out.println(String.format("s: %d", p.getShort()));
-        System.out.println(String.format("i: %d", p.getInt()));
-        System.out.println(String.format("l: %d", p.getLong()));
-        System.out.println(String.format("d: %f", p.getDouble()));
+    private void verify(Primitives actual, PrimitivesImpl expected) {
+        Assert.assertEquals(expected.getBoolean(), actual.getBoolean());
+        Assert.assertEquals(expected.getShort(), actual.getShort());
+        Assert.assertEquals(expected.getInt(), actual.getInt());
+        Assert.assertEquals(expected.getLong(), actual.getLong());
+        Assert.assertEquals(expected.getDouble(), actual.getDouble());
     }
 }

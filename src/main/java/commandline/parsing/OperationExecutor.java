@@ -1,8 +1,9 @@
-package commandline.parsing.parser;
+package commandline.parsing;
 
 import commandline.parsing.Exceptions.ParsingException;
 import commandline.parsing.datastructure.Converter;
-import commandline.parsing.datastructure.Operation;
+import commandline.parsing.Operation;
+import commandline.parsing.parser.ParserBase;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -25,9 +26,9 @@ public class OperationExecutor extends ParserBase {
         this.operations = operations;
     }
 
-    public void execute(String[] args) throws ParsingException {
+    public Object execute(String[] args) throws ParsingException {
         Operation opToRun = parseOperation(args);
-        opToRun.onOperation(opToRun.getSwitchParser().parse(Arrays.copyOfRange(args, 1, args.length)));
+        return opToRun.onOperation(opToRun.getSwitchParser().parse(Arrays.copyOfRange(args, 1, args.length)));
     }
 
     private Operation parseOperation(String args[]) throws ParsingException {

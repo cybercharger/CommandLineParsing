@@ -1,4 +1,4 @@
-package commandline.parsing;
+package commandline.parsing.HelpClasses;
 
 /**
  * User: Chris

@@ -2,7 +2,7 @@ package commandline.parsing.parser;
 
 import commandline.parsing.Exceptions.ParsingException;
 import commandline.parsing.annotations.SwitchOperation;
-import commandline.parsing.datastructure.Operation;
+import commandline.parsing.Operation;
 import commandline.parsing.datastructure.SwitchInfo;
 import commandline.parsing.datastructure.SwitchSet;
 

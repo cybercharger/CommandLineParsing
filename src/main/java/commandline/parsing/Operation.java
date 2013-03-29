@@ -1,5 +1,6 @@
-package commandline.parsing.datastructure;
+package commandline.parsing;
 
+import commandline.parsing.datastructure.SwitchSet;
 import commandline.parsing.parser.SwitchSetParser;
 import org.apache.commons.lang3.StringUtils;
 
@@ -8,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
  * Date: 3/26/13
  * Time: 11:51 PM
  */
-public abstract class Operation<T extends SwitchSet> {
+public abstract class Operation<T extends SwitchSet, TResult> {
 
     private final String name;
     private SwitchSetParser<T> parser;
@@ -28,5 +29,5 @@ public abstract class Operation<T extends SwitchSet> {
         return parser;
     }
 
-    public abstract void onOperation(T switchSet);
+    public abstract TResult onOperation(T switchSet);
 }

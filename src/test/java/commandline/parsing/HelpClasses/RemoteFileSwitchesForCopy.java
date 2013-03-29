@@ -1,7 +1,8 @@
-package commandline.parsing;
+package commandline.parsing.HelpClasses;
 
 import commandline.parsing.annotations.SwitchOperation;
 import commandline.parsing.annotations.ParamSwitch;
+import commandline.parsing.datastructure.SwitchSet;
 
 /**
  * User: Chris
@@ -9,7 +10,7 @@ import commandline.parsing.annotations.ParamSwitch;
  * Time: 12:15 AM
  */
 @SwitchOperation(name = RemoteFileOperationNames.copy)
-public interface RemoteFileSwitchesForCopy extends RemoteFileSwitchesShared {
+public interface RemoteFileSwitchesForCopy extends RemoteFileSwitchesShared, SwitchSet {
     @ParamSwitch(shortName = "s", longName = "source", description = "full file path of the file to copy", required = true)
     String getFileToCopy();
 
