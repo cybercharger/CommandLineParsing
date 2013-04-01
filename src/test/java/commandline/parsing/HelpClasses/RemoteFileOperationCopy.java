@@ -67,6 +67,11 @@ public class RemoteFileOperationCopy extends Operation<RemoteFileSwitchesForCopy
         public Boolean getVerboseLog() {
             return verbose;
         }
+
+        @Override
+        public String[] getArguments() {
+            return new String[0];
+        }
     }
 
     @Override

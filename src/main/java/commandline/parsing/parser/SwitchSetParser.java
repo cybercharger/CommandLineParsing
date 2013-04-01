@@ -32,6 +32,9 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            if (method.getName().equals("getArguments")) {
+                return cl.getArgs();
+            }
             SwitchInfo info = parser.getSwitchInfo(method.getName());
             if (info instanceof FlagSwitchInfo) {
                 return cl.hasOption(info.getKey());

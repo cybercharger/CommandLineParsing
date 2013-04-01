@@ -37,13 +37,15 @@ public class TestSwitchParser {
         private int anInt;
         private long aLong;
         private double aDouble;
+        private String[] args;
 
-        public PrimitivesImpl(boolean aBoolean, short aShort, int anInt, long aLong, double aDouble) {
+        public PrimitivesImpl(boolean aBoolean, short aShort, int anInt, long aLong, double aDouble, String[] args) {
             this.aBoolean = aBoolean;
             this.aShort = aShort;
             this.anInt = anInt;
             this.aLong = aLong;
             this.aDouble = aDouble;
+            this.args = args;
         }
 
         @Override
@@ -70,15 +72,23 @@ public class TestSwitchParser {
         public double getDouble() {
             return aDouble;
         }
+
+        @Override
+        public String[] getArguments() {
+            return args;
+        }
     }
 
     @Test
     public void testPrimitive() {
         try {
             SwitchSetParser<Primitives> ssp = new SwitchSetParser<Primitives>(Primitives.class);
-            String cmd = "-bfalse -i 100 -l -200 -s3 -d2.2";
+            String cmd = "-bfalse -i 100 -l -200 -s3 -d2.2 arg1 arg2";
             Primitives res = ssp.parse(StringUtils.split(cmd));
-            verify(res, new PrimitivesImpl(false, (short)3, 100, -200L, 2.2));
+            verify(res, new PrimitivesImpl(false, (short)3, 100, -200L, 2.2, new String[] {"arg1", "arg2"}));
+            cmd = "-bfalse -i 100 -l -200 -s3 -d2.2";
+            res = ssp.parse(StringUtils.split(cmd));
+            verify(res, new PrimitivesImpl(false, (short)3, 100, -200L, 2.2, new String[0]));
         } catch (ParsingException e) {
             e.printStackTrace();
         }
@@ -90,5 +100,12 @@ public class TestSwitchParser {
         Assert.assertEquals(expected.getInt(), actual.getInt());
         Assert.assertEquals(expected.getLong(), actual.getLong());
         Assert.assertEquals(expected.getDouble(), actual.getDouble());
+        String[] actArgs = actual.getArguments();
+        String[] expArgs = expected.getArguments();
+        if (actArgs == null && expArgs == null) return;
+        Assert.assertEquals(expArgs.length, actArgs.length);
+        for (int i = 0; i < actArgs.length; ++i) {
+            Assert.assertEquals(expArgs[i], actArgs[i]);
+        }
     }
 }

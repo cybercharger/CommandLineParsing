@@ -6,4 +6,5 @@ package commandline.parsing.datastructure;
  * Time: 11:52 PM
  */
 public interface SwitchSet {
+    String[] getArguments();
 }

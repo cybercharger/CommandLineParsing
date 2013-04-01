@@ -54,6 +54,11 @@ public class RemoteFileOperationDelete extends Operation<RemoteFileSwitchesForDe
         public Boolean getVerboseLog() {
             return verbose;
         }
+
+        @Override
+        public String[] getArguments() {
+            return new String[0];
+        }
     }
     public RemoteFileOperationDelete() throws ParsingException {
         super(RemoteFileOperationNames.delete, new SwitchSetParser<RemoteFileSwitchesForDelete>(RemoteFileSwitchesForDelete.class));
