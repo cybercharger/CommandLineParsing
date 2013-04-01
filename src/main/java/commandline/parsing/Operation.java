@@ -29,5 +29,5 @@ public abstract class Operation<T extends SwitchSet, TResult> {
         return parser;
     }
 
-    public abstract TResult onOperation(T switchSet);
+    public abstract TResult onOperation(T switchSet) throws Throwable;
 }
