@@ -1,5 +1,7 @@
 package commandline.parsing.datastructure;
 
+import java.util.Properties;
+
 /**
  * User: Chris
  * Date: 3/26/13
@@ -7,4 +9,6 @@ package commandline.parsing.datastructure;
  */
 public interface SwitchSet {
     String[] getArguments();
+
+    Properties getProperties(String name);
 }

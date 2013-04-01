@@ -35,6 +35,11 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
             if (method.getName().equals("getArguments")) {
                 return cl.getArgs();
             }
+
+            if (method.getName().equals("getProperties")) {
+                return cl.getOptionProperties((String)(args[0]));
+            }
+
             SwitchInfo info = parser.getSwitchInfo(method.getName());
             if (info instanceof FlagSwitchInfo) {
                 return cl.hasOption(info.getKey());

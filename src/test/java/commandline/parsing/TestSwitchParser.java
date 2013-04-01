@@ -8,6 +8,8 @@ import junit.framework.Assert;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
+import java.util.Properties;
+
 /**
  * User: chriskang
  * Date: 3/28/13
@@ -76,6 +78,11 @@ public class TestSwitchParser {
         @Override
         public String[] getArguments() {
             return args;
+        }
+
+        @Override
+        public Properties getProperties(String name) {
+            return null;
         }
     }
 

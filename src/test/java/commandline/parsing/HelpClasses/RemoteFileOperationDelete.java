@@ -4,6 +4,8 @@ import commandline.parsing.Exceptions.ParsingException;
 import commandline.parsing.Operation;
 import commandline.parsing.parser.SwitchSetParser;
 
+import java.util.Properties;
+
 /**
  * User: Chris
  * Date: 3/27/13
@@ -58,6 +60,11 @@ public class RemoteFileOperationDelete extends Operation<RemoteFileSwitchesForDe
         @Override
         public String[] getArguments() {
             return new String[0];
+        }
+
+        @Override
+        public Properties getProperties(String name) {
+            return null;
         }
     }
     public RemoteFileOperationDelete() throws ParsingException {
