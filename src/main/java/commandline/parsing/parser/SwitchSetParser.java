@@ -103,7 +103,7 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
                     new Class[]{setClass},
                     new ResultProxy(cl, this)));
         } catch (ParseException e) {
-            throw new ParsingException("", ParsingException.Error.ParsingError, e);
+            throw new ParsingException(e.getMessage(), ParsingException.Error.ParsingError, e);
         }
     }
 
