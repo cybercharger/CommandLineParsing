@@ -36,6 +36,8 @@ public class TestOperationExecutor {
 
         } catch (ParsingException e) {
             e.printStackTrace();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
     }
 }

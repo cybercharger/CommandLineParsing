@@ -26,7 +26,7 @@ public class OperationExecutor extends ParserBase {
         this.operations = operations;
     }
 
-    public Object execute(String[] args) throws ParsingException {
+    public Object execute(String[] args) throws Throwable {
         Operation opToRun = parseOperation(args);
         return opToRun.onOperation(opToRun.getSwitchParser().parse(Arrays.copyOfRange(args, 1, args.length)));
     }
