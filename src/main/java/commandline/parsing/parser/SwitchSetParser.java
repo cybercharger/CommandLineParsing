@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: Chris
@@ -73,7 +74,7 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
             validateReturnType(type);
             if (param != null) {
                 String key = getKey(param);
-                if (switchMap.containsKey(key)) throw new ParsingException(ParsingException.Error.DuplicateSwitches);
+                if (switchMap.containsKey(key)) throw new IllegalArgumentException("duplicate shortName/longName found " + key);
                 SwitchInfo info = new ParameterSwitchInfo(param.shortName(), param.longName(), param.description(),
                         param.required(), param.defaultValue(), type);
                 switchMap.put(key, info);
@@ -84,7 +85,7 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
             FlagSwitch flag = getAnnotation(FlagSwitch.class, annotations);
             if (flag != null) {
                 String key = getKey(flag);
-                if (switchMap.containsKey(key)) throw new ParsingException(ParsingException.Error.DuplicateSwitches);
+                if (switchMap.containsKey(key)) throw new IllegalArgumentException("duplicate shortName/longName found " + key);
                 SwitchInfo info = new FlagSwitchInfo(flag.shortName(), flag.longName(), flag.description());
                 switchMap.put(key, info);
                 methodMap.put(method.getName(), key);
@@ -95,9 +96,20 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
         helpFormatter = new HelpFormatter();
     }
 
-    //TODO: extend this method to support more according to cli
     public void printHelpInfo(String syntax) {
-        helpFormatter.printHelp(syntax, cliOptions);
+        String required = " ";
+        String optional = "";
+        for (Map.Entry<String, SwitchInfo> entry : switchMap.entrySet()) {
+            SwitchInfo info = entry.getValue();
+            String s = StringUtils.isBlank(info.getShortName()) ? "--" + info.getLongName() : "-" + info.getShortName();
+            if (info.isRequired()) {
+            required += s + " ";
+            }
+            else {
+                optional += "[" + s + "] ";
+            }
+        }
+        helpFormatter.printHelp(syntax + required + optional, cliOptions);
     }
 
     public T parse(String[] args) throws ParsingException {

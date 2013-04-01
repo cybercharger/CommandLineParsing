@@ -7,15 +7,9 @@ package commandline.parsing.Exceptions;
  */
 public class ParsingException extends Exception {
     public enum Error {
-        DuplicateSwitches,
-        InvalidSwitchName,
         InvalidSwitchType,
-        DuplicateOperations,
         InvalidOptionName,
-        OperationNameNotSpecified,
-        NoDescription,
         ParsingError,
-        Unspecified,
     }
 
     private Error error;

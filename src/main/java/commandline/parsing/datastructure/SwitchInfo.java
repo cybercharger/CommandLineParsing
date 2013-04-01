@@ -55,12 +55,17 @@ public abstract class SwitchInfo {
     private String defaultValue;
     private Class<?> type;
 
-    public SwitchInfo(String shortName, String longName, String description, boolean required, boolean flag, String defaultValue, Class<?> type)
-            throws ParsingException {
+    public SwitchInfo(String shortName, String longName, String description, boolean required, boolean flag, String defaultValue, Class<?> type) {
         if (StringUtils.isBlank(shortName) && StringUtils.isBlank(longName)) {
-            throw new ParsingException("both short name and long name are null or empty", ParsingException.Error.InvalidSwitchName);
+            throw new IllegalArgumentException("both short name and long name are null or empty");
         }
-        if (StringUtils.isBlank(description)) throw new ParsingException(ParsingException.Error.NoDescription);
+        String key = (!StringUtils.isBlank(shortName) ? shortName : longName);
+        if (StringUtils.isBlank(description)) {
+            throw new IllegalArgumentException("description is not specified for switch: " + key);
+        }
+        if (!required && StringUtils.isEmpty(defaultValue)) {
+            throw new IllegalArgumentException("default value is not set for optional switch: " + key);
+        }
         this.shortName = shortName;
         this.longName = longName;
         this.description = description;
