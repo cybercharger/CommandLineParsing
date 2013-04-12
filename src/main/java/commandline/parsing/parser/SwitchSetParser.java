@@ -12,7 +12,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * User: Chris
@@ -38,7 +40,7 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
             }
 
             if (method.getName().equals("getProperties")) {
-                return cl.getOptionProperties((String)(args[0]));
+                return cl.getOptionProperties((String) (args[0]));
             }
 
             SwitchInfo info = parser.getSwitchInfo(method.getName());
@@ -46,7 +48,7 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
                 return cl.hasOption(info.getKey());
 
             } else {
-                String defaultValue =info.getDefaultValue();
+                String defaultValue = info.getDefaultValue();
                 return getConverter().convert(cl.getOptionValue(info.getKey(), defaultValue), info.getType());
             }
         }
@@ -67,31 +69,49 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
 
         if (setClass == null) throw new IllegalArgumentException("setClass is null");
         this.setClass = setClass;
+        Set<String> shorts = new HashSet<String>();
+        Set<String> longs = new HashSet<String>();
         for (Method method : setClass.getMethods()) {
             Annotation[] annotations = method.getDeclaredAnnotations();
-            ParamSwitch param = getAnnotation(ParamSwitch.class, annotations);
+            Annotation a = getSwitchAnnotation(annotations);
+            if (null == a) continue;
+
+            String shortName = null;
             Class<?> type = method.getReturnType();
             validateReturnType(type);
-            if (param != null) {
-                String key = getKey(param);
-                if (switchMap.containsKey(key)) throw new IllegalArgumentException("duplicate shortName/longName found " + key);
-                SwitchInfo info = new ParameterSwitchInfo(param.shortName(), param.longName(), param.description(),
+            String longName = null;
+            String key = null;
+            SwitchInfo info = null;
+            if (a instanceof ParamSwitch) {
+                ParamSwitch param = ParamSwitch.class.cast(a);
+                shortName = param.shortName();
+                longName = param.longName();
+                key = getKey(param);
+                info = new ParameterSwitchInfo(param.shortName(), param.longName(), param.description(),
                         param.required(), param.defaultValue(), type);
-                switchMap.put(key, info);
-                methodMap.put(method.getName(), key);
-                cliOptions.addOption(info.createOption());
-                continue;
+            } else if (a instanceof FlagSwitch) {
+                FlagSwitch flag = FlagSwitch.class.cast(a);
+                shortName = flag.shortName();
+                longName = flag.longName();
+                key = getKey(flag);
+                info = new FlagSwitchInfo(flag.shortName(), flag.longName(), flag.description());
+            } else {
+                throw new RuntimeException(String.format("ParamSwitch/FlagSwitch is get from %s, but none of them can be converted to", method.getName()));
             }
-            FlagSwitch flag = getAnnotation(FlagSwitch.class, annotations);
-            if (flag != null) {
-                String key = getKey(flag);
-                if (switchMap.containsKey(key)) throw new IllegalArgumentException("duplicate shortName/longName found " + key);
-                SwitchInfo info = new FlagSwitchInfo(flag.shortName(), flag.longName(), flag.description());
-                switchMap.put(key, info);
-                methodMap.put(method.getName(), key);
-                cliOptions.addOption(info.createOption());
-                continue;
+            if (shortName != null && shorts.contains(shortName)) {
+                throw new IllegalArgumentException("duplicate shortName found: " + shortName);
+            } else {
+                shorts.add(shortName);
             }
+            if (longName != null && longs.contains(longName)) {
+                throw new IllegalArgumentException("duplicate longName found: " + longName);
+            } else {
+                longs.add(longName);
+            }
+            if (StringUtils.isBlank(key)) throw new IllegalArgumentException("neither short name nor long name is specified");
+            switchMap.put(key, info);
+            methodMap.put(method.getName(), key);
+            cliOptions.addOption(info.createOption());
         }
         helpFormatter = new HelpFormatter();
     }
@@ -103,9 +123,8 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
             SwitchInfo info = entry.getValue();
             String s = StringUtils.isBlank(info.getShortName()) ? "--" + info.getLongName() : "-" + info.getShortName();
             if (info.isRequired()) {
-            required += s + " ";
-            }
-            else {
+                required += s + " ";
+            } else {
                 optional += "[" + s + "] ";
             }
         }
@@ -132,10 +151,10 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
         if (clazz.equals(void.class)) throw new ParsingException(ParsingException.Error.InvalidSwitchType);
     }
 
-    static <T extends Annotation> T getAnnotation(Class<T> expected, Annotation[] annotations) {
-        if (expected == null || annotations == null || annotations.length <= 0) return null;
+    static Annotation getSwitchAnnotation(Annotation[] annotations) {
+        if (annotations == null || annotations.length <= 0) return null;
         for (Annotation a : annotations) {
-            if (expected.isInstance(a)) return expected.cast(a);
+            if (a instanceof ParamSwitch || a instanceof FlagSwitch) return a;
         }
         return null;
     }
