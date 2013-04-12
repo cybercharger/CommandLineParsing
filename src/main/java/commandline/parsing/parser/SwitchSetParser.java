@@ -75,13 +75,14 @@ public class SwitchSetParser<T extends SwitchSet> extends ParserBase {
             Annotation[] annotations = method.getDeclaredAnnotations();
             Annotation a = getSwitchAnnotation(annotations);
             if (null == a) continue;
-
-            String shortName = null;
             Class<?> type = method.getReturnType();
             validateReturnType(type);
-            String longName = null;
-            String key = null;
-            SwitchInfo info = null;
+
+            String shortName;
+            String longName;
+            String key;
+            SwitchInfo info;
+
             if (a instanceof ParamSwitch) {
                 ParamSwitch param = ParamSwitch.class.cast(a);
                 shortName = param.shortName();
